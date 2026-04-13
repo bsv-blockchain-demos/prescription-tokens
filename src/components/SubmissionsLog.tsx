@@ -9,9 +9,11 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Token } from '../components/types';
 import { useBroadcast } from '../context/broadcast';
+import { useLanguage } from '../context/language';
 
 const SubmissionsLog: React.FC = () => {
   const { isSubmitting, setPrescription, setPresentation, setDispensation, setAcknowledgement } = useBroadcast()
+  const { t } = useLanguage()
   const [tokens, setTokens] = useState<Token[]>([])
   const [isMinimized, setIsMinimized] = useState(false);
   const theme = useTheme();
@@ -68,13 +70,13 @@ const SubmissionsLog: React.FC = () => {
   const getStatusLabel = (status: string) => {
     switch(status) {
       case 'created':
-        return 'Creada';
+        return t.status.created;
       case 'presented':
-        return 'Presentada';
+        return t.status.presented;
       case 'dispensed':
-        return 'Dispensada';
+        return t.status.dispensed;
       case 'acknowledged':
-        return 'Confirmada';
+        return t.status.acknowledged;
       default:
         return status.charAt(0).toUpperCase() + status.slice(1);
     }
@@ -115,12 +117,12 @@ const SubmissionsLog: React.FC = () => {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <LocalHospitalIcon sx={{ mr: 1.5, color: theme.palette.primary.main }} />
             <Typography variant="h6" sx={{ color: theme.palette.primary.main, fontWeight: 600 }}>
-              Registros de Recetas en Blockchain
+              {t.submissions.header}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', gap: 3 }}>
             {!isMinimized && (
-              <Tooltip title="Borrar todos los registros">
+              <Tooltip title={t.submissions.clearAll}>
                 <IconButton 
                   onClick={handleClearAll} 
                   sx={{ 
@@ -138,7 +140,7 @@ const SubmissionsLog: React.FC = () => {
                 </IconButton>
               </Tooltip>
             )}
-            <Tooltip title={isMinimized ? "Expandir" : "Minimizar"}>
+            <Tooltip title={isMinimized ? t.submissions.expand : t.submissions.minimize}>
               <IconButton 
                 onClick={() => setIsMinimized(!isMinimized)} 
                 sx={{ 
@@ -182,7 +184,7 @@ const SubmissionsLog: React.FC = () => {
         }}>
           <Box sx={{ mb: 2 }}>
             <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mb: 2 }}>
-              Historial completo de transacciones registradas en el blockchain
+              {t.submissions.subtitle}
             </Typography>
           </Box>
           
@@ -224,7 +226,7 @@ const SubmissionsLog: React.FC = () => {
                         fontSize: '0.75rem',
                         whiteSpace: 'nowrap'
                       }}>
-                        {new Date(entry.data.timestamp).toLocaleString('es-ES', {
+                        {new Date(entry.data.timestamp).toLocaleString(t.locale, {
                           hour: '2-digit',
                           minute: '2-digit',
                           day: '2-digit',
@@ -247,7 +249,7 @@ const SubmissionsLog: React.FC = () => {
                     />
                     {entry?.spent && (
                       <Chip 
-                        label="Gastada" 
+                        label={t.submissions.spent}
                         size="small"
                         sx={{ 
                           backgroundColor: `${theme.palette.info.main}20`,
@@ -282,7 +284,7 @@ const SubmissionsLog: React.FC = () => {
                           {entry.txid}
                         </Typography>
                       </Box>
-                      <Tooltip title="Ver en whatsonchain">
+                      <Tooltip title={t.submissions.viewOnChain}>
                         <IconButton
                           href={`https://whatsonchain.com/tx/${entry.txid}`}
                           target="_blank"
@@ -301,7 +303,7 @@ const SubmissionsLog: React.FC = () => {
                         </IconButton>
                       </Tooltip>
                       {entry.status === 'acknowledged' && !entry.spent && (
-                        <Tooltip title="Verificado">
+                        <Tooltip title={t.submissions.verified}>
                           <VerifiedIcon fontSize="small" sx={{ ml: 1, color: theme.palette.success.main }} />
                         </Tooltip>
                       )}

@@ -6,9 +6,11 @@ import { Transaction, PushDrop, Utils, WalletInterface, Script, OP } from '@bsv/
 import { patient, pharmacyIdentityKey } from '../../utils/wallets';
 import { saveSubmission, setSpent } from '../../utils/db';
 import { useBroadcast } from '../../context/broadcast';
+import { useLanguage } from '../../context/language';
 
 const AcknowledgeReceiptCard: React.FC = () => {
   const { addToQueue, dispensation, setDispensation, setAcknowledgement, setIsSubmitting, isSubmitting } = useBroadcast()
+  const { t } = useLanguage()
 
     async function patientAcknowledgesReceipt() {
         try {
@@ -39,7 +41,7 @@ const AcknowledgeReceiptCard: React.FC = () => {
           const lockingScript = new Script()
           lockingScript.writeOpCode(OP.OP_FALSE)
           lockingScript.writeOpCode(OP.OP_RETURN)
-          lockingScript.writeBin(Utils.toArray('recibido', 'utf8'))
+          lockingScript.writeBin(Utils.toArray(t.dataStatus.acknowledged, 'utf8'))
           lockingScript.writeBin(arId)
 
           tx.addOutput({
@@ -53,7 +55,7 @@ const AcknowledgeReceiptCard: React.FC = () => {
             data: {
               id,
               timestamp,
-              status: 'recibido',
+              status: t.dataStatus.acknowledged,
             },
             txid: tx.id('hex'),
             tx: tx.toBEEF(),
@@ -94,10 +96,10 @@ const AcknowledgeReceiptCard: React.FC = () => {
             ...cardTitleSx,
             color: '#2c6e8e'
           }}>
-            Confirmación de Recepción
+            {t.stages.acknowledge.title}
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={cardDescriptionSx}>
-            El paciente confirma que recibió el medicamento.
+            {t.stages.acknowledge.description}
           </Typography>
         </CardContent>
       </CardActionArea>

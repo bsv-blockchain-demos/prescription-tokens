@@ -6,9 +6,11 @@ import { PushDrop, Transaction, Hash, Utils, WalletInterface } from '@bsv/sdk';
 import { patient, doctorIdentityKey, pharmacyIdentityKey } from '../../utils/wallets';
 import { setSpent, saveSubmission } from '../../utils/db';
 import { useBroadcast } from '../../context/broadcast';
+import { useLanguage } from '../../context/language';
 
 const PresentPrescriptionCard: React.FC = () => {
   const { addToQueue, prescription, setPrescription, setPresentation, setIsSubmitting, isSubmitting } = useBroadcast()
+  const { t } = useLanguage()
 
   async function patientPresentsPrescriptionAtPharmacy() {
     try {
@@ -38,7 +40,7 @@ const PresentPrescriptionCard: React.FC = () => {
       const timestamp = new Date().toISOString()
       
       const lockingScript = await pushdrop.lock(
-        [Utils.toArray('presentar ' + timestamp, 'utf8'), documentHash],
+        [Utils.toArray(t.dataStatus.presented + ' ' + timestamp, 'utf8'), documentHash],
         [0, 'medical prescription'],
         prescriptionData.id,
         pharmacyIdentityKey,
@@ -57,7 +59,7 @@ const PresentPrescriptionCard: React.FC = () => {
         data: {
           id: prescriptionData.id,
           timestamp,
-          status: 'presentada'
+          status: t.dataStatus.presented
         },
         txid: tx.id('hex'),
         tx: tx.toBEEF(),
@@ -96,10 +98,10 @@ const PresentPrescriptionCard: React.FC = () => {
             ...cardTitleSx,
             color: '#2c6e8e'
           }}>
-            Presentación de la Receta
+            {t.stages.present.title}
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={cardDescriptionSx}>
-            El paciente presenta la receta al farmacéutico.
+            {t.stages.present.description}
           </Typography>
         </CardContent>
       </CardActionArea>

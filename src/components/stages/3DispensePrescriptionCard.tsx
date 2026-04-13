@@ -6,9 +6,11 @@ import { PushDrop, Transaction, Utils, WalletInterface } from '@bsv/sdk';
 import { patientIdentityKey, pharmacy } from '../../utils/wallets';
 import { setSpent, saveSubmission } from '../../utils/db';
 import { useBroadcast } from '../../context/broadcast';
+import { useLanguage } from '../../context/language';
 
 const DispensePrescriptionCard: React.FC = () => {
   const { addToQueue, presentation, setPresentation, setDispensation, setIsSubmitting, isSubmitting } = useBroadcast()
+  const { t } = useLanguage()
 
     async function pharmacistDispensesMedication() {
       try {
@@ -37,7 +39,7 @@ const DispensePrescriptionCard: React.FC = () => {
         const timestamp = new Date().toISOString()
         
         const lockingScript = await pushdrop.lock(
-          [Utils.toArray('dispensar ' + timestamp, 'utf8'), arId],
+          [Utils.toArray(t.dataStatus.dispensed + ' ' + timestamp, 'utf8'), arId],
           [0, 'medical prescription'],
           id,
           patientIdentityKey,
@@ -56,7 +58,7 @@ const DispensePrescriptionCard: React.FC = () => {
           data: {
             id,
             timestamp,
-            status: 'dispensar'
+            status: t.dataStatus.dispensed
           },
           txid: tx.id('hex'),
           tx: tx.toBEEF(),
@@ -94,10 +96,10 @@ const DispensePrescriptionCard: React.FC = () => {
             ...cardTitleSx,
             color: '#2c6e8e'
           }}>
-            Dispensación del Medicamento
+            {t.stages.dispense.title}
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={cardDescriptionSx}>
-            El farmacéutico certifica que el medicamento fue entregado.
+            {t.stages.dispense.description}
           </Typography>
         </CardContent>
       </CardActionArea>

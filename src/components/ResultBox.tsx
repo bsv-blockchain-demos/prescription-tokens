@@ -6,6 +6,7 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { Token } from '../components/types';
+import { useLanguage } from '../context/language';
 
 interface ResultBoxProps {
   entry: Token | null,
@@ -19,6 +20,7 @@ const ResultBox: React.FC<ResultBoxProps> = ({ entry: startingData }) => {
   const [arcData, setArcData] = useState<ArcResponse | null>(null)
   const [copied, setCopied] = useState<string | null>(null);
   const theme = useTheme();
+  const { t } = useLanguage();
 
   const getStatus = async () => {
     if (!startingData?.txid) return;
@@ -62,7 +64,7 @@ const ResultBox: React.FC<ResultBoxProps> = ({ entry: startingData }) => {
       transition: 'all 0.3s ease',
     }}>
       <Typography variant="body1" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-        Aún no hay datos para mostrar
+        {t.resultBox.noData}
       </Typography>
     </Box>
   }
@@ -90,10 +92,10 @@ const ResultBox: React.FC<ResultBoxProps> = ({ entry: startingData }) => {
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
         <LocalHospitalIcon sx={{ mr: 1.5, color: theme.palette.primary.main }} />
         <Typography variant="h6" sx={{ color: theme.palette.primary.main, fontWeight: 600 }}>
-          Registro de Receta
+          {t.resultBox.header}
         </Typography>
         <Box sx={{ flexGrow: 1 }}></Box>
-        <Tooltip title="Actualizar estado">
+        <Tooltip title={t.resultBox.refresh}>
           <IconButton 
             size="small" 
             onClick={(e) => {
@@ -140,7 +142,7 @@ const ResultBox: React.FC<ResultBoxProps> = ({ entry: startingData }) => {
                   fontSize: '0.85rem'
                 }}
               >
-                {key}
+                {t.fieldLabels[key] || key}
               </Typography>
               
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -196,7 +198,7 @@ const ResultBox: React.FC<ResultBoxProps> = ({ entry: startingData }) => {
                 >
                   {startingData.txid}
                 </Typography>
-                <Tooltip title={copied === 'txid' ? "¡Copiado!" : "Copiar al portapapeles"}>
+                <Tooltip title={copied === 'txid' ? t.resultBox.copied : t.resultBox.copyToClipboard}>
                   <IconButton 
                     size="small" 
                     onClick={(e) => {
@@ -223,11 +225,11 @@ const ResultBox: React.FC<ResultBoxProps> = ({ entry: startingData }) => {
           <Divider sx={{ mb: 2 }} />
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Typography variant="subtitle2" sx={{ color: theme.palette.primary.main, fontWeight: 600 }}>
-              Verificación en Blockchain
+              {t.resultBox.blockchainVerification}
             </Typography>
             
             <Chip 
-              label={!arcData?.txStatus ? 'Pendiente' : arcData?.txStatus} 
+              label={!arcData?.txStatus ? t.resultBox.pending : arcData?.txStatus}
               size="small"
               color={!arcData?.txStatus ? 'warning' : 'success'}
               variant="outlined"
@@ -239,7 +241,7 @@ const ResultBox: React.FC<ResultBoxProps> = ({ entry: startingData }) => {
       
       {startingData?.txid && (
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, pt: 2, borderTop: `1px dashed ${theme.palette.divider}` }}>
-          <Tooltip title="Ver en Whatsonchain">
+          <Tooltip title={t.resultBox.viewOnChain}>
             <IconButton 
               onClick={(e) => {
                 e.stopPropagation();

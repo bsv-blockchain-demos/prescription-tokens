@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, Box, Paper } from '@mui/material';
+import { Container, Typography, Box, Paper, ButtonGroup, Button } from '@mui/material';
 import CreatePrescriptionCard from './components/stages/1CreatePrescriptionCard';
 import PresentPrescriptionCard from './components/stages/2PresentPrescriptionCard';
 import DispensePrescriptionCard from './components/stages/3DispensePrescriptionCard';
@@ -7,9 +7,11 @@ import AcknowledgeReceiptCard from './components/stages/4AcknowledgeReceiptCard'
 import ResultBox from './components/ResultBox';
 import SubmissionsLog from './components/SubmissionsLog';
 import { useBroadcast } from './context/broadcast';
+import { useLanguage } from './context/language';
 
 const App: React.FC = () => {
   const { prescription, presentation, dispensation, acknowledgement } = useBroadcast()
+  const { lang, t, toggleLanguage } = useLanguage()
   const boxSx = {
     display: 'flex',
     gap: { xs: 3, md: 4 },
@@ -45,28 +47,45 @@ const App: React.FC = () => {
         position: 'relative',
         zIndex: 1,
       }}>
-        <Paper elevation={0} sx={{ 
-          textAlign: 'center', 
-          p: { xs: 3, md: 4 }, 
-          my: 4, 
+        <Paper elevation={0} sx={{
+          textAlign: 'center',
+          p: { xs: 3, md: 4 },
+          my: 4,
           background: 'linear-gradient(135deg, rgba(44, 110, 142, 0.08) 0%, rgba(255, 255, 255, 0.9) 100%)',
           borderRadius: 3,
           border: '1px solid rgba(44, 110, 142, 0.1)',
-          backdropFilter: 'blur(4px)'
+          backdropFilter: 'blur(4px)',
+          position: 'relative'
         }}>
-          <Typography variant="h4" color="primary.main" gutterBottom sx={{ 
-            fontWeight: 700, 
+          <ButtonGroup size="small" sx={{ position: 'absolute', top: 12, right: 12 }}>
+            <Button
+              onClick={lang === 'en' ? undefined : toggleLanguage}
+              variant={lang === 'en' ? 'contained' : 'outlined'}
+              sx={{ minWidth: 36, px: 1 }}
+            >
+              EN
+            </Button>
+            <Button
+              onClick={lang === 'es' ? undefined : toggleLanguage}
+              variant={lang === 'es' ? 'contained' : 'outlined'}
+              sx={{ minWidth: 36, px: 1 }}
+            >
+              ES
+            </Button>
+          </ButtonGroup>
+          <Typography variant="h4" color="primary.main" gutterBottom sx={{
+            fontWeight: 700,
             textShadow: '0 1px 2px rgba(0,0,0,0.05)',
             fontSize: { xs: '1.7rem', sm: '2rem', md: '2.125rem' }
           }}>
-            Demostración de Recetas Médicas en Blockchain
+            {t.app.title}
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary" sx={{ 
-            maxWidth: '800px', 
+          <Typography variant="subtitle1" color="text.secondary" sx={{
+            maxWidth: '800px',
             mx: 'auto',
             mt: 1
           }}>
-            Sistema seguro de gestión de recetas médicas utilizando tecnología blockchain
+            {t.app.subtitle}
           </Typography>
         </Paper>
         

@@ -4,21 +4,20 @@ import { cardMediaSx, cardContainerSx, cardTitleSx, cardDescriptionSx, disabledC
 import { DataEntry, Token } from '../types';
 import { doctorPromise, patientIdentityKey } from '../../utils/wallets';
 import { saveSubmission } from '../../utils/db';
-import prescriptions from '../../utils/prescriptions.json';
+import { prescriptionsEs, prescriptionsEn } from '../../utils/prescriptions';
 import { Utils, PushDrop, Random, Hash } from '@bsv/sdk'
 import { useBroadcast } from '../../context/broadcast';
+import { useLanguage } from '../../context/language';
 
 const CreatePrescriptionCard: React.FC = () => {
   const { prescription, presentation, dispensation, acknowledgement, setPrescription, setIsSubmitting, addToQueue, isSubmitting } = useBroadcast()
+  const { lang, t } = useLanguage()
 
   const outstanding = prescription ?? presentation ?? dispensation ?? acknowledgement
 
-  /**
-   * Simulates data by picking from the example data
-   * @returns The simulated data
-   */
   function simulateData(): DataEntry {
-    const data = prescriptions[Math.floor(Math.random() * prescriptions.length)] as DataEntry
+    const prescriptions = lang === 'en' ? prescriptionsEn : prescriptionsEs
+    const data = { ...prescriptions[Math.floor(Math.random() * prescriptions.length)] } as DataEntry
     data.timestamp = new Date().toISOString()
     data.id = Utils.toBase64(Random(8))
     return data
@@ -69,7 +68,7 @@ const CreatePrescriptionCard: React.FC = () => {
       console.log({ action })
 
       const token: Token = {
-        data: { ...prescriptionData, estado: 'creado'},
+        data: { ...prescriptionData, estado: t.dataStatus.created},
         txid: action.txid as string,
         tx: action.tx as number[],
         status: 'created',
@@ -105,10 +104,10 @@ const CreatePrescriptionCard: React.FC = () => {
             ...cardTitleSx,
             color: '#2c6e8e'
           }}>
-            Emisión de Receta Médica
+            {t.stages.create.title}
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={cardDescriptionSx}>
-            El médico crea y firma la receta digital.
+            {t.stages.create.description}
           </Typography>
         </CardContent>
       </CardActionArea>

@@ -82,4 +82,4 @@ No automated test script is defined. A successful frontend build does not verify
 
 ## Licence
 
-The existing project documentation stated ISC, but this checkout has no standalone licence file or package licence declaration. The intended licence needs confirmation.
+**Documented licence: ISC.** This is the declaration recorded in the project documentation. No standalone licence file or package licence declaration is included in this repository.
